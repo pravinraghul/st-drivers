@@ -4,29 +4,29 @@
 #include <stm32f4xx.h>
 
 /* Mode configuration */
-#define GPIO_MODE_INPUT  0x00
-#define GPIO_MODE_OUTPUT  0x01
-#define GPIO_MODE_ALTFUNC  0x10 
-#define GPIO_MODE_ANALOG  0x11
+#define GPIO_MODE_INPUT 0
+#define GPIO_MODE_OUTPUT 1
+#define GPIO_MODE_ALTFUNC 2
+#define GPIO_MODE_ANALOG 3
 
 /* Output type configuration */
-#define GPIO_OPTYPE_PUSH_PULL  0
+#define GPIO_OPTYPE_PUSH_PULL 0
 #define GPIO_OPTYPE_OPEN_DRAIN  1
 
 /* Speed configuration */
-#define GPIO_SPEED_LOW  0x00
-#define GPIO_SPEED_MEDIUM  0x01
-#define GPIO_SPEED_HIGH  0x10
-#define GPIO_SPEED_VERY_HIGH  0x11
+#define GPIO_SPEED_LOW 0
+#define GPIO_SPEED_MEDIUM 1
+#define GPIO_SPEED_HIGH 2
+#define GPIO_SPEED_VERY_HIGH 3
 
 /* Pull configuration */
-#define GPIO_PULL_NO  0x00
-#define GPIO_PULL_UP  0x01
-#define GPIO_PULL_DOWN  0x10
+#define GPIO_PULL_NO 0
+#define GPIO_PULL_UP 1
+#define GPIO_PULL_DOWN 2
 
 /* Edge Trigger */
-#define GPIO_EDGE_RISING  0
-#define GPIO_EDGE_FALLING  1
+#define GPIO_EDGE_RISING 0
+#define GPIO_EDGE_FALLING 1
 #define GPIO_EDGE_RISING_AND_FALLING 2
 
 /* Clock configuration */

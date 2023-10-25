@@ -6,11 +6,17 @@ void gpio_init(GPIO_TypeDef *portx, uint16_t pin, GPIO_Config *config)
     portx->OTYPER |= (config->optype << pin);
     portx->OSPEEDR |= (config->speed << (2 * pin));
     portx->PUPDR |= (config->pull << (2 * pin));
+
+    if (pin < 8) {
+        portx->AFR[0] |= (config->altfunc << (pin * 4));
+    } else {
+        portx->AFR[1] |= (config->altfunc << ((pin % 8) * 4));
+    }
 }
 
 uint8_t gpio_read(GPIO_TypeDef *portx, uint16_t pin)
 {
-    return (portx->IDR >> pin) & 0x01;
+    return (portx->IDR >> pin) & 1U;
 }
 
 void gpio_write(GPIO_TypeDef *portx, uint16_t pin, uint8_t value) 
