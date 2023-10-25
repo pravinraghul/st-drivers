@@ -103,7 +103,7 @@ C_INCLUDES =  \
 -I$(DRIVER)/gpio \
 -I$(EXTERNAL)/CMSIS/Include \
 -I$(EXTERNAL)/CMSIS/Device/ST/STM32F4xx/Include \
--I$(EXTERNAL)/RTT
+-I$(EXTERNAL)/SEGGER_RTT
 
 # compile gcc flags
 ASFLAGS = $(MCU) $(AS_DEFS) $(AS_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections

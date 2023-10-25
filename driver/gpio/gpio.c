@@ -1,55 +1,55 @@
 #include "gpio.h"
 
-void gpio_init(GPIO_TypeDef *portx, uint16_t pin, GPIO_Config *config)
+void gpio_init(gpio_handle_t *gpio)
 {
-    portx->MODER |= (config->mode << (2 * pin));
-    portx->OTYPER |= (config->optype << pin);
-    portx->OSPEEDR |= (config->speed << (2 * pin));
-    portx->PUPDR |= (config->pull << (2 * pin));
+    gpio->port->MODER |= (gpio->config.mode << (2 * gpio->pin));
+    gpio->port->OTYPER |= (gpio->config.optype << gpio->pin);
+    gpio->port->OSPEEDR |= (gpio->config.speed << (2 * gpio->pin));
+    gpio->port->PUPDR |= (gpio->config.pull << (2 * gpio->pin));
 
-    if (pin < 8) {
-        portx->AFR[0] |= (config->altfunc << (pin * 4));
+    if (gpio->pin < 8) {
+        gpio->port->AFR[0] |= (gpio->config.altfunc << (gpio->pin * 4));
     } else {
-        portx->AFR[1] |= (config->altfunc << ((pin % 8) * 4));
+        gpio->port->AFR[1] |= (gpio->config.altfunc << ((gpio->pin % 8) * 4));
     }
 }
 
-uint8_t gpio_read(GPIO_TypeDef *portx, uint16_t pin)
+uint8_t gpio_read(gpio_handle_t *gpio)
 {
-    return (portx->IDR >> pin) & 1U;
+    return (gpio->port->IDR >> gpio->pin) & 1;
 }
 
-void gpio_write(GPIO_TypeDef *portx, uint16_t pin, uint8_t value) 
+void gpio_write(gpio_handle_t *gpio, uint8_t value)
 {
     if (value)
-        portx->ODR |= (1 << pin);
+        gpio->port->ODR |= (1 << gpio->pin);
     else 
-        portx->ODR &= ~(1 << pin);
+        gpio->port->ODR &= ~(1 << gpio->pin);
 }
 
-void gpio_config_interrupt(uint16_t pin, uint8_t edge)
+void gpio_config_interrupt(gpio_handle_t *gpio, uint8_t edge)
 {
     if (edge == GPIO_EDGE_RISING) {
-        EXTI->RTSR |= 1 << pin;
+        EXTI->RTSR |= (1 << gpio->pin);
     } else if (edge == GPIO_EDGE_FALLING) {
-        EXTI->FTSR |= 1 << pin;
+        EXTI->FTSR |= (1 << gpio->pin);
     } else if (edge == GPIO_EDGE_RISING_AND_FALLING){
-        EXTI->RTSR |= 1 << pin;
-        EXTI->FTSR |= 1 << pin;
+        EXTI->RTSR |= (1 << gpio->pin);
+        EXTI->FTSR |= (1 << gpio->pin);
     } else {
         // do nothing
     }
 }
 
-void gpio_enable_interrupt(uint16_t pin, IRQn_Type irq_no)
+void gpio_enable_interrupt(gpio_handle_t *gpio, IRQn_Type irq_no)
 {
-    EXTI->IMR |= 1 << pin;
+    EXTI->IMR |= (1 << gpio->pin);
     NVIC_EnableIRQ(irq_no);
 }
 
-void gpio_clear_interrupt(uint16_t pin)
+void gpio_clear_interrupt(gpio_handle_t *gpio)
 {
-    if (EXTI->PR & (1 << pin)) {
-        EXTI->PR |= (1 << pin);
+    if (EXTI->PR & (1 << gpio->pin)) {
+        EXTI->PR |= (1 << gpio->pin);
     }
 }

@@ -46,14 +46,21 @@ typedef struct
     uint32_t pull;
     uint32_t speed;
     uint32_t altfunc;
-} GPIO_Config;
+} gpio_config_t;
 
-void gpio_init(GPIO_TypeDef *gpiox, uint16_t pin, GPIO_Config *config);
-uint8_t gpio_read(GPIO_TypeDef *gpiox, uint16_t pin);
-void gpio_write(GPIO_TypeDef *gpiox, uint16_t pin, uint8_t value);
+typedef struct
+{
+    GPIO_TypeDef *port;
+    uint16_t pin;
+    gpio_config_t config;
+} gpio_handle_t;
 
-void gpio_config_interrupt(uint16_t pin, uint8_t edge);
-void gpio_enable_interrupt(uint16_t pin, IRQn_Type irq_no);
-void gpio_clear_interrupt(uint16_t pin);
+void gpio_init(gpio_handle_t *gpio);
+uint8_t gpio_read(gpio_handle_t *gpio);
+void gpio_write(gpio_handle_t *gpio, uint8_t value);
+
+void gpio_config_interrupt(gpio_handle_t *gpio, uint8_t edge);
+void gpio_enable_interrupt(gpio_handle_t *gpio, IRQn_Type irq_no);
+void gpio_clear_interrupt(gpio_handle_t *gpio);
 
 #endif /* GPIO_H_ */
