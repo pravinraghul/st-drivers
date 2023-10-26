@@ -9,7 +9,7 @@ void spi_init(spi_handle_t *handle)
         handle->config.firstbit | handle->config.nss;
 }
 
-void spi_transmit_data(spi_handle_t *handle, uint8_t *buf, uint16_t len)
+void spi_transmit(spi_handle_t *handle, uint8_t *buf, uint16_t len)
 {
     handle->txbuf = buf;
     handle->txlen = len;
@@ -21,7 +21,7 @@ void spi_transmit_data(spi_handle_t *handle, uint8_t *buf, uint16_t len)
     handle->spi->CR2 |= SPI_CR2_TXEIE;
 }
 
-void spi_receive_data(spi_handle_t *handle, uint8_t *buf, uint16_t len)
+void spi_receive(spi_handle_t *handle, uint8_t *buf, uint16_t len)
 {
     handle->txbuf = buf;
     handle->txlen = len;
@@ -33,7 +33,7 @@ void spi_receive_data(spi_handle_t *handle, uint8_t *buf, uint16_t len)
     handle->spi->CR2 |= SPI_CR2_RXNEIE;
 }
 
-void spi_transmit_receive_data(spi_handle_t *handle, uint8_t *txbuf, uint8_t *rxbuf, uint16_t len)
+void spi_transmit_receive(spi_handle_t *handle, uint8_t *txbuf, uint8_t *rxbuf, uint16_t len)
 {
     handle->txbuf = txbuf;
     handle->txlen = len;
@@ -52,7 +52,7 @@ void spi_enable_interrupt(IRQn_Type irq_no)
     NVIC_EnableIRQ(irq_no);
 }
 
-static void spi_handle_tx_interrupt(spi_handle_t *handle)
+static void spi_handle_transmit_interrupt(spi_handle_t *handle)
 {
     if (handle->config.datasize == SPI_DATASIZE_8BIT) {
         // 8 bit
@@ -73,7 +73,7 @@ static void spi_handle_tx_interrupt(spi_handle_t *handle)
     }
 }
 
-static void spi_handle_rx_interrupt(spi_handle_t *handle)
+static void spi_handle_receive_interrupt(spi_handle_t *handle)
 {
     if (handle->config.datasize == SPI_DATASIZE_8BIT) {
         // 8 bit
@@ -97,11 +97,11 @@ static void spi_handle_rx_interrupt(spi_handle_t *handle)
 void spi_interrupt_handler(spi_handle_t *handle)
 {
     if (handle->spi->SR & SPI_SR_TXE && handle->spi->CR2 & SPI_CR2_TXEIE) {
-        spi_handle_tx_interrupt(handle);
+        spi_handle_transmit_interrupt(handle);
     }
 
     // rx interrupt
     if (handle->spi->SR & SPI_SR_RXNE && handle->spi->CR2 & SPI_CR2_RXNEIE) {
-        spi_handle_rx_interrupt(handle);
+        spi_handle_receive_interrupt(handle);
     }
 }

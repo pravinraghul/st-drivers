@@ -61,7 +61,7 @@ int main()
     SEGGER_RTT_printf(0, "SPI setup done..! \r\n");
 
     while (1) {
-        spi_transmit_receive_data(&spi_handle, tbuffer, rbuffer, 4);
+        spi_transmit_receive(&spi_handle, tbuffer, rbuffer, 4);
         while(spi_handle.state != SPI_STATE_READY);
 
         // check the message

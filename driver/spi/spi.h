@@ -43,6 +43,14 @@
 #define SPI5_CLK_ENABLE() (RCC->APB2ENR |= RCC_APB2ENR_SPI5EN)
 #define SPI6_CLK_ENABLE() (RCC->APB2ENR |= RCC_APB2ENR_SPI6EN)
 
+/** SPI states **/
+typedef enum {
+SPI_STATE_RESET,
+SPI_STATE_READY,
+SPI_STATE_TXBUSY,
+SPI_STATE_RXBUSY
+} spi_state_t ;
+
 /** SPI configurations **/
 typedef struct {
     uint32_t mode;
@@ -54,14 +62,6 @@ typedef struct {
     uint32_t baudrate;
     uint32_t firstbit;
 } spi_config_t;
-
-/** SPI states **/
-typedef enum {
-SPI_STATE_RESET,
-SPI_STATE_READY,
-SPI_STATE_TXBUSY,
-SPI_STATE_RXBUSY
-} spi_state_t ;
 
 /** SPI handle **/
 typedef struct {
@@ -75,9 +75,9 @@ typedef struct {
 } spi_handle_t;
 
 void spi_init(spi_handle_t *handle);
-void spi_transmit_data(spi_handle_t *handle, uint8_t *buf, uint16_t len);
-void spi_receive_data(spi_handle_t *handle, uint8_t *buf, uint16_t len);
-void spi_transmit_receive_data(spi_handle_t *handle, uint8_t *tbuf, uint8_t *rbuf, uint16_t len);
+void spi_transmit(spi_handle_t *handle, uint8_t *buf, uint16_t len);
+void spi_receive(spi_handle_t *handle, uint8_t *buf, uint16_t len);
+void spi_transmit_receive(spi_handle_t *handle, uint8_t *tbuf, uint8_t *rbuf, uint16_t len);
 
 void spi_enable_interrupt(IRQn_Type irq_no);
 void spi_interrupt_handler(spi_handle_t *handle);
