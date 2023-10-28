@@ -42,6 +42,7 @@ C_SOURCES =  \
 $(DRIVER)/system_stm32f4xx.c \
 $(DRIVER)/gpio/gpio.c \
 $(DRIVER)/spi/spi.c \
+$(DRIVER)/uart/uart.c \
 $(EXTERNAL)/SEGGER_RTT/SEGGER_RTT_Syscalls_GCC.c \
 $(EXTERNAL)/SEGGER_RTT/SEGGER_RTT.c \
 $(EXTERNAL)/SEGGER_RTT/SEGGER_RTT_printf.c \
@@ -103,6 +104,7 @@ AS_INCLUDES =
 C_INCLUDES =  \
 -I$(DRIVER)/gpio \
 -I$(DRIVER)/spi \
+-I$(DRIVER)/uart \
 -I$(EXTERNAL)/CMSIS/Include \
 -I$(EXTERNAL)/CMSIS/Device/ST/STM32F4xx/Include \
 -I$(EXTERNAL)/SEGGER_RTT
