@@ -34,6 +34,7 @@ BUILD_DIR = build
 DRIVER = driver
 EXAMPLE = examples
 EXTERNAL = external
+FLASHSCRIPT = flash.jlink
 ######################################
 # source
 ######################################
@@ -132,10 +133,10 @@ LDSCRIPT = $(DRIVER)/STM32F429ZITx_FLASH.ld
 # libraries
 LIBS = -lc -lm -lnosys 
 LIBDIR = 
-LDFLAGS = $(MCU) -specs=nano.specs -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref -Wl,--gc-sections
+LDFLAGS = $(MCU) -specs=nano.specs -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-Map=$(BUILD_DIR)/firmware.map,--cref -Wl,--gc-sections
 
 # default action: build all
-all: check-target $(BUILD_DIR)/$(TARGET).elf $(BUILD_DIR)/$(TARGET).hex $(BUILD_DIR)/$(TARGET).bin
+all: check-target $(BUILD_DIR)/firmware.elf $(BUILD_DIR)/firmware.hex $(BUILD_DIR)/firmware.bin
 
 check-target:
 ifndef TARGET
@@ -159,7 +160,7 @@ $(BUILD_DIR)/%.o: %.c Makefile | $(BUILD_DIR)
 $(BUILD_DIR)/%.o: %.s Makefile | $(BUILD_DIR)
 	$(AS) -c $(CFLAGS) $< -o $@
 
-$(BUILD_DIR)/$(TARGET).elf: $(OBJECTS) Makefile
+$(BUILD_DIR)/firmware.elf: $(OBJECTS) Makefile
 	$(CC) $(OBJECTS) $(LDFLAGS) -o $@
 	$(SZ) $@
 
@@ -182,5 +183,8 @@ clean:
 # dependencies
 #######################################
 -include $(wildcard $(BUILD_DIR)/*.d)
+
+flash: all
+	JLinkExe -CommandFile $(FLASHSCRIPT)
 
 # *** EOF ***
