@@ -7,6 +7,29 @@
 gpio_handle_t gpio_handle;
 spi_handle_t spi_handle;
 
+uint8_t tbuffer[4] = {0x12, 0x23, 0x34, 0x45};
+uint8_t rbuffer[4] = {0};
+uint8_t value = 1;
+
+void receive_callback(void)
+{
+    // check the message
+    for (int i = 0; i < 4; i++) {
+        SEGGER_RTT_printf(0, "tbuffer[%d] = %d, rbuffer[%d] = %d\r\n", i, tbuffer[i], i, rbuffer[i]);
+        if (tbuffer[i] != rbuffer[i]) {
+            value = 0;
+            break;
+        }
+    }
+
+    if (value) {
+        SEGGER_RTT_printf(0, "SPI loopback passed...! \r\n");
+    } else {
+        SEGGER_RTT_printf(0, "SPI loopback failed...! \r\n");
+    }
+    SEGGER_RTT_printf(0, "\r\n \r\n \r\n");
+}
+
 void setup()
 {
     // GPIO configurations
@@ -40,6 +63,7 @@ void setup()
     spi_handle.config.nss = SPI_SSM_ENABLE;
     spi_handle.config.mode = SPI_MODE_MASTER;
     spi_handle.state = SPI_STATE_READY;
+    spi_handle.rx_cmpl_cb = receive_callback;
 
     spi_init(&spi_handle);
     spi_enable_interrupt(SPI4_IRQn);
@@ -53,39 +77,31 @@ void SPI4_IRQHandler(void)
 
 int main()
 {
-    uint8_t tbuffer[4] = {0x12, 0x23, 0x34, 0x45};
-    uint8_t rbuffer[4] = {0};
-    uint8_t value = 1;
-
     setup();
     SEGGER_RTT_printf(0, "SPI setup done..! \r\n");
 
-    while (1) {
-        spi_transmit_receive(&spi_handle, tbuffer, rbuffer, 4);
-        while(spi_handle.state != SPI_STATE_READY);
+    // some delay
+    for (uint32_t i = 0; i < 1000 * 1000; i++);
+    // some delay
+    for (uint32_t i = 0; i < 1000 * 1000; i++);
+    // some delay
+    for (uint32_t i = 0; i < 1000 * 1000; i++);
 
-        // check the message
-        for (int i = 0; i < 4; i++) {
-            SEGGER_RTT_printf(0, "tbuffer[%d] = %d, rbuffer[%d] = %d\r\n", i, tbuffer[i], i, rbuffer[i]);
-            if (tbuffer[i] != rbuffer[i]) {
-                value = 0;
-                break;
-            }
-        }
+    spi_transmit_receive(&spi_handle, tbuffer, rbuffer, 4);
 
-        if (value) {
-            SEGGER_RTT_printf(0, "SPI loopback passed...! \r\n");
-        } else {
-            SEGGER_RTT_printf(0, "SPI loopback failed...! \r\n");
-        }
-        SEGGER_RTT_printf(0, "\r\n \r\n \r\n");
+    /* while (1) { */
+    /*     spi_transmit_receive(&spi_handle, tbuffer, rbuffer, 4); */
+    /*     while(spi_handle.state != SPI_STATE_READY); */
 
-        // some delay
-        for (uint32_t i = 0; i < 1000 * 1000; i++) {}
-        // some delay
-        for (uint32_t i = 0; i < 1000 * 1000; i++) {}
-        // some delay
-        for (uint32_t i = 0; i < 1000 * 1000; i++) {}
-    }
+    /*     // check the message */
+    /*     for (int i = 0; i < 4; i++) { */
+    /*         SEGGER_RTT_printf(0, "tbuffer[%d] = %d, rbuffer[%d] = %d\r\n", i, tbuffer[i], i, rbuffer[i]); */
+    /*         if (tbuffer[i] != rbuffer[i]) { */
+    /*             value = 0; */
+    /*             break; */
+    /*         } */
+    /*     } */
+
+    /* } */
     return 0;
 }

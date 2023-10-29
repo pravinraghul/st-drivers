@@ -70,6 +70,9 @@ static void spi_handle_transmit_interrupt(spi_handle_t *handle)
         handle->spi->CR2 &= ~SPI_CR2_TXEIE;
         if (handle->state != SPI_STATE_RXBUSY)
             handle->state = SPI_STATE_READY;
+
+        if (handle->tx_cmpl_cb)
+            handle->tx_cmpl_cb();
     }
 }
 
@@ -90,6 +93,9 @@ static void spi_handle_receive_interrupt(spi_handle_t *handle)
     if (handle->rxlen == 0) {
         handle->spi->CR2 &= ~SPI_CR2_RXNEIE;
         handle->state = SPI_STATE_READY;
+
+        if (handle->rx_cmpl_cb)
+            handle->rx_cmpl_cb();
     }
 
 }

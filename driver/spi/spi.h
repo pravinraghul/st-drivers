@@ -43,6 +43,9 @@
 #define SPI5_CLK_ENABLE() (RCC->APB2ENR |= RCC_APB2ENR_SPI5EN)
 #define SPI6_CLK_ENABLE() (RCC->APB2ENR |= RCC_APB2ENR_SPI6EN)
 
+typedef void (*transmit_complete_callback_t) (void);
+typedef void (*receive_complete_callback_t) (void);
+
 /** SPI states **/
 typedef enum {
 SPI_STATE_RESET,
@@ -72,6 +75,8 @@ typedef struct {
     uint16_t txlen;
     uint8_t *rxbuf;
     uint16_t rxlen;
+    transmit_complete_callback_t tx_cmpl_cb;
+    receive_complete_callback_t rx_cmpl_cb;
 } spi_handle_t;
 
 void spi_init(spi_handle_t *handle);
