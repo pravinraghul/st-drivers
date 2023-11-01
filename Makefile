@@ -40,18 +40,18 @@ FLASHSCRIPT = flash.jlink
 ######################################
 # C sources
 C_SOURCES =  \
-$(DRIVER)/system_stm32f4xx.c \
 $(DRIVER)/gpio/gpio.c \
 $(DRIVER)/spi/spi.c \
 $(DRIVER)/uart/uart.c \
 $(EXTERNAL)/SEGGER_RTT/SEGGER_RTT_Syscalls_GCC.c \
 $(EXTERNAL)/SEGGER_RTT/SEGGER_RTT.c \
 $(EXTERNAL)/SEGGER_RTT/SEGGER_RTT_printf.c \
+$(EXAMPLE)/system_stm32f4xx.c \
 $(EXAMPLE)/$(TARGET)/main.c
 
 # ASM sources
 ASM_SOURCES =  \
-$(DRIVER)/startup_stm32f429xx.s
+$(EXAMPLE)/startup_stm32f429xx.s
 
 
 #######################################
@@ -128,7 +128,7 @@ CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)"
 # LDFLAGS
 #######################################
 # link script
-LDSCRIPT = $(DRIVER)/STM32F429ZITx_FLASH.ld
+LDSCRIPT = $(EXAMPLE)/STM32F429ZITx_FLASH.ld
 
 # libraries
 LIBS = -lc -lm -lnosys 
