@@ -1,0 +1,3 @@
+[submodule "test/cortex-m-startup"]
+	path = test/cortex-m-startup
+	url = git@github.com:pravinraghul/cortex-m-startup.git
