@@ -1,7 +1,13 @@
 #include "gpio.h"
 #include "uart.h"
-#include "SEGGER_RTT.h"
 
+#define LED_PORT GPIOG
+#define LED_PIN 13
+
+#define LED_ON 0x01
+#define LED_OFF 0x00
+
+gpio_handle_t led;
 gpio_handle_t gpio_handle;
 uart_handle_t uart_handle;
 
@@ -9,13 +15,34 @@ uint8_t buffer[2];
 
 static void receive_complete_callback(void)
 {
-    SEGGER_RTT_printf(0, "Received: %x \r\n", buffer[0]);
+    // echo back the received data
     uart_transmit(&uart_handle, buffer, 1);
-    SEGGER_RTT_printf(0, "Transmit: %x \r\n", buffer[0]);
+
+    switch (buffer[0])
+    {
+    case LED_ON:
+        gpio_write(&led, 1);
+        break;
+    case LED_OFF:
+        gpio_write(&led, 0);
+        break;
+    }
 }
 
 void setup()
 {
+    // LED configuration and initialization
+    led.port = LED_PORT;
+    led.pin = LED_PIN;
+    led.config.mode = GPIO_MODE_OUTPUT;
+    led.config.optype = GPIO_OPTYPE_PUSH_PULL;
+    led.config.pull = GPIO_PULL_NO;
+    led.config.speed = GPIO_SPEED_MEDIUM;
+
+    GPIOG_CLK_ENABLE();
+    gpio_init(&led);
+
+    // UART configuration and initialization
     GPIOC_CLK_ENABLE();
     GPIOD_CLK_ENABLE();
 
@@ -31,7 +58,6 @@ void setup()
     gpio_handle.port = GPIOD;
     gpio_handle.pin = 2;
     gpio_init(&gpio_handle);
-    SEGGER_RTT_printf(0, "GPIO configured \r\n");
 
     UART5_CLK_ENABLE();
     uart_handle.uart = UART5;
@@ -46,10 +72,9 @@ void setup()
 
     uart_init(&uart_handle);
     uart_enable_interrupt(UART5_IRQn);
-    SEGGER_RTT_printf(0, "UART5 configured \r\n");
 }
 
-void UART5_IRQHandler(void)
+void uart5_irq_handler(void)
 {
     uart_interrupt_handler(&uart_handle);
 }

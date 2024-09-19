@@ -1,6 +1,6 @@
 
-#include "gpio.h"
-#include "SEGGER_RTT.h"
+#include <gpio.h>
+// #include "SEGGER_RTT.h"
 
 #define BUTTON_PORT GPIOA
 #define BUTTON_PIN 0
@@ -11,14 +11,14 @@
 gpio_handle_t led;
 gpio_handle_t button;
 
-void EXTI0_IRQHandler(void) {
+void exti0_irq_handler(void) {
     gpio_clear_interrupt(&button);
 
     if (gpio_read(&button)) {
-        SEGGER_RTT_printf(0, "Button pressed \r\n");
+        // SEGGER_RTT_printf(0, "Button pressed \r\n");
         gpio_write(&led, 1);
     } else {
-        SEGGER_RTT_printf(0, "Button released \r\n");
+        // SEGGER_RTT_printf(0, "Button released \r\n");
         gpio_write(&led, 0);
     }
 }
@@ -44,7 +44,7 @@ int main() {
     gpio_config_interrupt(&button, GPIO_EDGE_RISING_AND_FALLING);
     gpio_enable_interrupt(&button, EXTI0_IRQn);
 
-    SEGGER_RTT_printf(0, "GPIO LED & button configured \r\n");
+    // SEGGER_RTT_printf(0, "GPIO LED & button configured \r\n");
 
     while(1);
 

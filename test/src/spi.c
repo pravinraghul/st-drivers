@@ -70,7 +70,7 @@ void setup()
 }
 
 // SPI4 IRQHandler
-void SPI4_IRQHandler(void)
+void spi4_irq_handler(void)
 {
     spi_interrupt_handler(&spi_handle);
 }
