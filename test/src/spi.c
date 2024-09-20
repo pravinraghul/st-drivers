@@ -2,8 +2,15 @@
 #include "gpio.h"
 #include "spi.h"
 
-#include "SEGGER_RTT.h"
+#define LED_PORT GPIOG
+#define GLED_PIN 13
+#define RLED_PIN 14
 
+#define LED_ON 0x01
+#define LED_OFF 0x00
+
+gpio_handle_t gled;
+gpio_handle_t rled;
 gpio_handle_t gpio_handle;
 spi_handle_t spi_handle;
 
@@ -15,7 +22,6 @@ void receive_callback(void)
 {
     // check the message
     for (int i = 0; i < 4; i++) {
-        SEGGER_RTT_printf(0, "tbuffer[%d] = %d, rbuffer[%d] = %d\r\n", i, tbuffer[i], i, rbuffer[i]);
         if (tbuffer[i] != rbuffer[i]) {
             value = 0;
             break;
@@ -23,16 +29,35 @@ void receive_callback(void)
     }
 
     if (value) {
-        SEGGER_RTT_printf(0, "SPI loopback passed...! \r\n");
+        gpio_write(&gled, 1);
     } else {
-        SEGGER_RTT_printf(0, "SPI loopback failed...! \r\n");
+        gpio_write(&gled, 0);
     }
-    SEGGER_RTT_printf(0, "\r\n \r\n \r\n");
 }
 
 void setup()
 {
-    // GPIO configurations
+    // LED configuration and initialization
+    gled.port = LED_PORT;
+    gled.pin = GLED_PIN;
+    gled.config.mode = GPIO_MODE_OUTPUT;
+    gled.config.optype = GPIO_OPTYPE_PUSH_PULL;
+    gled.config.pull = GPIO_PULL_NO;
+    gled.config.speed = GPIO_SPEED_MEDIUM;
+
+    GPIOG_CLK_ENABLE();
+    gpio_init(&gled);
+
+    rled.port = LED_PORT;
+    rled.pin = RLED_PIN;
+    rled.config.mode = GPIO_MODE_OUTPUT;
+    rled.config.optype = GPIO_OPTYPE_PUSH_PULL;
+    rled.config.pull = GPIO_PULL_NO;
+    rled.config.speed = GPIO_SPEED_MEDIUM;
+    gpio_init(&rled);
+    gpio_write(&rled, 1);
+
+    // SPI configuration and initialization
     GPIOE_CLK_ENABLE();
 
     gpio_handle.port = GPIOE;
@@ -78,7 +103,6 @@ void spi4_irq_handler(void)
 int main()
 {
     setup();
-    SEGGER_RTT_printf(0, "SPI setup done..! \r\n");
 
     // some delay
     for (uint32_t i = 0; i < 1000 * 1000; i++);
@@ -89,19 +113,8 @@ int main()
 
     spi_transmit_receive(&spi_handle, tbuffer, rbuffer, 4);
 
-    /* while (1) { */
-    /*     spi_transmit_receive(&spi_handle, tbuffer, rbuffer, 4); */
-    /*     while(spi_handle.state != SPI_STATE_READY); */
-
-    /*     // check the message */
-    /*     for (int i = 0; i < 4; i++) { */
-    /*         SEGGER_RTT_printf(0, "tbuffer[%d] = %d, rbuffer[%d] = %d\r\n", i, tbuffer[i], i, rbuffer[i]); */
-    /*         if (tbuffer[i] != rbuffer[i]) { */
-    /*             value = 0; */
-    /*             break; */
-    /*         } */
-    /*     } */
-
-    /* } */
+    while (1) {
+        // do nothing
+    }
     return 0;
 }

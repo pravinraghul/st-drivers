@@ -1,5 +1,4 @@
 #include "spi.h"
-#include "SEGGER_RTT.h"
 
 void spi_init(spi_handle_t *handle)
 {
