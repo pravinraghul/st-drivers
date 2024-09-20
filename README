@@ -1,6 +1,0 @@
-Study on driver development on STM32f429 disco
-
-*Learnings*
- - Driver api's for communication protocol like spi, uart.
- - Flashing board using jlink script with onboard stlink interface.
- - Debugging using JLink RTT viewer by intergrating RTT library.
